@@ -1,0 +1,112 @@
+{
+  "format_version": [
+    1,
+    1,
+    0
+  ],
+  "stone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "deepslate": {
+    "textures": "kitchen_xray_clear"
+  },
+  "granite": {
+    "textures": "kitchen_xray_clear"
+  },
+  "diorite": {
+    "textures": "kitchen_xray_clear"
+  },
+  "andesite": {
+    "textures": "kitchen_xray_clear"
+  },
+  "dirt": {
+    "textures": "kitchen_xray_clear"
+  },
+  "coarse_dirt": {
+    "textures": "kitchen_xray_clear"
+  },
+  "dirt_with_roots": {
+    "textures": "kitchen_xray_clear"
+  },
+  "grass": {
+    "textures": "kitchen_xray_clear"
+  },
+  "podzol": {
+    "textures": "kitchen_xray_clear"
+  },
+  "mycelium": {
+    "textures": "kitchen_xray_clear"
+  },
+  "gravel": {
+    "textures": "kitchen_xray_clear"
+  },
+  "sand": {
+    "textures": "kitchen_xray_clear"
+  },
+  "red_sand": {
+    "textures": "kitchen_xray_clear"
+  },
+  "sandstone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "red_sandstone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "clay": {
+    "textures": "kitchen_xray_clear"
+  },
+  "hardened_clay": {
+    "textures": "kitchen_xray_clear"
+  },
+  "stained_hardened_clay": {
+    "textures": "kitchen_xray_clear"
+  },
+  "mud": {
+    "textures": "kitchen_xray_clear"
+  },
+  "packed_mud": {
+    "textures": "kitchen_xray_clear"
+  },
+  "tuff": {
+    "textures": "kitchen_xray_clear"
+  },
+  "calcite": {
+    "textures": "kitchen_xray_clear"
+  },
+  "dripstone_block": {
+    "textures": "kitchen_xray_clear"
+  },
+  "netherrack": {
+    "textures": "kitchen_xray_clear"
+  },
+  "basalt": {
+    "textures": "kitchen_xray_clear"
+  },
+  "smooth_basalt": {
+    "textures": "kitchen_xray_clear"
+  },
+  "blackstone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "soul_sand": {
+    "textures": "kitchen_xray_clear"
+  },
+  "soul_soil": {
+    "textures": "kitchen_xray_clear"
+  },
+  "crimson_nylium": {
+    "textures": "kitchen_xray_clear"
+  },
+  "warped_nylium": {
+    "textures": "kitchen_xray_clear"
+  },
+  "end_stone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "infested_stone": {
+    "textures": "kitchen_xray_clear"
+  },
+  "infested_deepslate": {
+    "textures": "kitchen_xray_clear"
+  }
+}

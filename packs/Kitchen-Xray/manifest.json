@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Kitchen X-ray",
+    "description": "Transparent natural terrain; ores retain vanilla textures. Enclosed faces may be culled.",
+    "uuid": "8876ef44-b1ab-4ce5-b22f-3ed383d9e8f4",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "a7cd3d67-8bd8-4ab8-a4b6-e457819deeba",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

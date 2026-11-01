@@ -1,0 +1,32 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Kitchen Fullbright (Vibrant Visuals)",
+    "description": "Raised white ambient lighting. Requires Vibrant Visuals; inactive in Simple/Fancy graphics.",
+    "uuid": "41675e76-31de-4fd0-9bb0-570696d1db72",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "b0810756-e57d-40e3-bc5c-5b395a67d51f",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "capabilities": [
+    "pbr"
+  ]
+}
