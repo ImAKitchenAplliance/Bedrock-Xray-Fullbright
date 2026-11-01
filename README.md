@@ -1,16 +1,17 @@
 # Bedrock X-ray & Fullbright
 
 Four independent resource packs and an optional Night Vision behavior pack for
-Minecraft Bedrock on Windows. These are initial, in-game **unverified** packs, not
-a client mod. The Night Vision option uses a world script; the other two are
-resource-only packs.
+Minecraft Bedrock on Windows. These are experimental packs, not a client mod.
+**X-ray is confirmed broken on the reported Windows Bedrock v26.60 setup.**
+The other packs still need in-game validation. The Night Vision option uses a
+world script; the other four are resource-only packs.
 
 ## Downloads
 
 - [Kitchen Brighter Blocks](dist/Kitchen-Brighter-Blocks.mcpack)
 - [Kitchen Solid Ores](dist/Kitchen-Solid-Ores.mcpack)
 - [Kitchen Night Vision — no Vibrant Visuals](dist/Kitchen-Night-Vision.mcpack)
-- [Kitchen X-ray](dist/Kitchen-Xray.mcpack)
+- [Kitchen X-ray — known broken on Windows v26.60](dist/Kitchen-Xray.mcpack)
 - [Kitchen Fullbright — Vibrant Visuals](dist/Kitchen-Fullbright-VV.mcpack)
 
 Download each file to your Windows PC, then double-click it to import into Minecraft.
@@ -48,9 +49,17 @@ Drink milk and confirm the effect returns. Repeat after death/respawn and in the
 Nether/End. Disable the pack, reload, and wait 60 seconds to confirm it expires.
 If nothing happens, send the Minecraft version and content-log script errors.
 
-## X-ray
+## X-ray — known broken on reported Windows v26.60 setup
 
-Overrides 38 common natural terrain blocks with an entirely transparent texture.
+**User-tested failure:** terrain renders black rather than see-through, including
+when X-ray is the only active resource pack. This rules out the Brighter Blocks
+and Solid Ores combination as a necessary cause. The result is consistent with
+opaque terrain rendering ignoring texture alpha; the internal renderer cause has
+not been verified. No working fix is available. Deactivate this pack on that setup.
+The archive is retained for investigation, not as a working download. File checks
+passing do not override this failed in-game result.
+
+Overrides 35 common natural terrain blocks with an entirely transparent texture.
 Ores, ancient debris, chests, bedrock, water, lava, and building blocks keep their
 normal textures. This deliberately does not recolor ores or hide dangerous fluids.
 
