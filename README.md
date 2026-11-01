@@ -2,7 +2,7 @@
 
 Four independent resource packs and an optional Night Vision behavior pack for
 Minecraft Bedrock on Windows. These are experimental packs, not a client mod.
-**X-ray is confirmed broken on the reported Windows Bedrock v26.60 setup.**
+**X-ray 1.0 failed on Windows Bedrock v26.60. Version 1.1 is a new, unverified geometry-based test.**
 The other packs still need in-game validation. The Night Vision option uses a
 world script; the other four are resource-only packs.
 
@@ -11,7 +11,7 @@ world script; the other four are resource-only packs.
 - [Kitchen Brighter Blocks](dist/Kitchen-Brighter-Blocks.mcpack)
 - [Kitchen Solid Ores](dist/Kitchen-Solid-Ores.mcpack)
 - [Kitchen Night Vision — no Vibrant Visuals](dist/Kitchen-Night-Vision.mcpack)
-- [Kitchen X-ray — known broken on Windows v26.60](dist/Kitchen-Xray.mcpack)
+- [Kitchen X-ray 1.1 — experimental geometry test](dist/Kitchen-Xray.mcpack)
 - [Kitchen Fullbright — Vibrant Visuals](dist/Kitchen-Fullbright-VV.mcpack)
 
 Download each file to your Windows PC, then double-click it to import into Minecraft.
@@ -49,26 +49,40 @@ Drink milk and confirm the effect returns. Repeat after death/respawn and in the
 Nether/End. Disable the pack, reload, and wait 60 seconds to confirm it expires.
 If nothing happens, send the Minecraft version and content-log script errors.
 
-## X-ray — known broken on reported Windows v26.60 setup
+## X-ray 1.1 — experimental geometry test
 
-**User-tested failure:** terrain renders black rather than see-through, including
-when X-ray is the only active resource pack. This rules out the Brighter Blocks
-and Solid Ores combination as a necessary cause. The result is consistent with
-opaque terrain rendering ignoring texture alpha; the internal renderer cause has
-not been verified. No working fix is available. Deactivate this pack on that setup.
-The archive is retained for investigation, not as a working download. File checks
-passing do not override this failed in-game result.
+Version 1.0 produced black terrain on the user's Windows Bedrock v26.60 setup,
+including when used alone. That alpha-texture approach has been removed.
 
-Overrides 35 common natural terrain blocks with an entirely transparent texture.
-Ores, ancient debris, chests, bedrock, water, lava, and building blocks keep their
-normal textures. This deliberately does not recolor ores or hide dangerous fluids.
+Version 1.1 uses the legacy resource-pack `blockshape: "invisible"` setting for
+35 natural terrain block identifiers instead. Vanilla textures are left intact;
+the obsolete transparent texture and its atlas entry are no longer packaged.
+The pack remains resource-only, with the same UUIDs and a higher version for updates.
+This changes the attempted rendering mechanism, not just the transparent pixel color.
 
-**Renderer limitation:** transparency does not force Bedrock to draw hidden faces.
-Fully enclosed ores may remain invisible, and opaque block render paths can ignore
-texture alpha. This is a terrain-transparency approach, not a guarantee of seeing
-all underground blocks. It does not change collision: invisible terrain remains
-solid. Check the pack in a disposable Creative world before relying on it. Server
-resource packs and anti-xray can also affect the result. Use only where permitted.
+**Compatibility is unverified:** the legacy shape technique appears in older
+[YockerFX/bedrock-xray](https://github.com/YockerFX/bedrock-xray) and
+[Jerry875267/MCBE-Xray](https://github.com/Jerry875267/MCBE-Xray) packs. Credit to those
+projects for the technique; no pack assets or shader files were copied. Current
+Microsoft block-resource documentation does not document this setting. Bedrock
+v26.60 may ignore it, and fully enclosed ore faces may still be culled. Passing
+file checks is not evidence of a successful visual effect.
+
+### Test this revision
+
+1. Deactivate the old X-ray pack. Import the new download and verify the name is
+   **Kitchen X-ray 1.1 - Geometry Test**. If Minecraft retains an older copy, remove
+   that copy through Minecraft's storage settings before importing again.
+2. Activate only the new X-ray in a disposable Creative world and reopen the world.
+3. Compare grass/dirt at the surface and stone/deepslate underground. Report whether
+   terrain is invisible, normal, black, or rendered with missing-texture patterns.
+4. Compare ore beside a cave with fully enclosed ore separately. Hidden terrain
+   does not guarantee visibility of enclosed ore. Block collision remains solid.
+5. Once tested alone, combine using **Solid Ores → X-ray → Brighter Blocks** order.
+
+Ores, ancient debris, chests, bedrock, water, lava, and building blocks are not
+explicitly overridden. Deactivate the pack to return to vanilla rendering. No
+behavior pack, scripts, commands, PBR, or shader injection is included.
 
 ## Fullbright (Vibrant Visuals only)
 

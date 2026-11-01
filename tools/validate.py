@@ -1,10 +1,8 @@
 """Validate deliverable structure, resource resolution, alpha and separate identities."""
 from pathlib import Path
 import json
-import struct
 import uuid
 import zipfile
-import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 identities = set()
@@ -36,26 +34,14 @@ for path in sorted((ROOT / 'dist').glob('*.mcpack')):
             assert len(blocks) > 30
             assert not any('ore' in name or name in ('ancient_debris', 'chest', 'lava', 'water', 'bedrock')
                            for name in blocks if name != 'format_version')
-            atlas = json.loads(archive.read('textures/terrain_texture.json'))['texture_data']
-            for block, definition in blocks.items():
-                if block == 'format_version':
-                    continue
-                texture = atlas[definition['textures']]['textures'] + '.png'
-                assert texture in names, texture
-            png = archive.read(texture)
-            assert png[:8] == b'\x89PNG\r\n\x1a\n'
-            pos, compressed = 8, b''
-            while pos < len(png):
-                size = struct.unpack('>I', png[pos:pos + 4])[0]
-                kind, data = png[pos + 4:pos + 8], png[pos + 8:pos + 8 + size]
-                crc = struct.unpack('>I', png[pos + 8 + size:pos + 12 + size])[0]
-                assert zlib.crc32(kind + data) & 0xffffffff == crc
-                if kind == b'IDAT':
-                    compressed += data
-                pos += size + 12
-            pixels = zlib.decompress(compressed)
-            assert len(pixels) == 16 * (1 + 16 * 4)
-            assert not any(pixels), 'Terrain texture is not fully transparent'
+            # The failed release's atlas and zero-alpha texture must not survive packaging.
+            assert not any(n.startswith('textures/') for n in names), 'Obsolete alpha override remains'
+            assert all(entry == {'blockshape': 'invisible'} for entry in blocks.values())
+            for block in ['stone', 'deepslate', 'grass', 'dirt', 'netherrack', 'end_stone']:
+                assert block in blocks, block
+            assert manifest['header']['version'] == [1, 1, 0]
+            assert manifest['modules'][0]['version'] == [1, 1, 0]
+            assert 'capabilities' not in manifest and 'dependencies' not in manifest
         elif 'lighting/global.json' not in names:
             textures = [n for n in names if n.startswith('textures/blocks/') and n.endswith(('.png', '.tga'))]
             assert len(textures) >= 20

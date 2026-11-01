@@ -51,10 +51,15 @@ def package(path):
 def main():
     xray = ROOT / 'packs' / 'Kitchen-Xray'
     fullbright = ROOT / 'packs' / 'Kitchen-Fullbright-VV'
-    write_json(xray / 'manifest.json', manifest('Kitchen X-ray',
-        'Transparent natural terrain; ores retain vanilla textures. Enclosed faces may be culled.',
+    write_json(xray / 'manifest.json', manifest('Kitchen X-ray 1.1 - Geometry Test',
+        'Experimental invisible terrain shapes. v26.60 compatibility needs in-game testing.',
         '8876ef44-b1ab-4ce5-b22f-3ed383d9e8f4', 'a7cd3d67-8bd8-4ab8-a4b6-e457819deeba'))
-    # Resource-pack block texture overrides, not behavior-pack block definitions.
+    # Bump only X-ray so Minecraft replaces the failed alpha-texture release.
+    xray_manifest = json.loads((xray / 'manifest.json').read_text())
+    xray_manifest['header']['version'] = [1, 1, 0]
+    xray_manifest['modules'][0]['version'] = [1, 1, 0]
+    write_json(xray / 'manifest.json', xray_manifest)
+    # Legacy resource-only blockshape route; current engine support is unverified.
     blocks = '''stone deepslate granite diorite andesite dirt coarse_dirt dirt_with_roots
     grass grass_block podzol mycelium gravel sand red_sand sandstone red_sandstone
     clay hardened_clay stained_hardened_clay mud packed_mud tuff calcite
@@ -62,13 +67,13 @@ def main():
     crimson_nylium warped_nylium end_stone infested_stone infested_deepslate'''.split()
     # grass is Bedrock's vanilla resource-pack key; grass_block is a Java name.
     blocks.remove('grass_block')
-    write_json(xray / 'blocks.json', {'format_version': [1, 1, 0],
-        **{name: {'textures': 'kitchen_xray_clear'} for name in blocks}})
-    write_json(xray / 'textures' / 'terrain_texture.json', {
-        'resource_pack_name': 'Kitchen X-ray', 'texture_name': 'atlas.terrain',
-        'padding': 8, 'num_mip_levels': 4,
-        'texture_data': {'kitchen_xray_clear': {'textures': 'textures/blocks/kitchen_xray_clear'}}})
-    png(xray / 'textures' / 'blocks' / 'kitchen_xray_clear.png', 16, 16, lambda x, y: (0, 0, 0, 0))
+    # Leave vanilla textures intact: if shapes are ignored, avoid black alpha terrain.
+    # Older shape-based packs omit format_version; retain that legacy layout here.
+    write_json(xray / 'blocks.json',
+               {name: {'blockshape': 'invisible'} for name in blocks})
+    # Remove precisely the obsolete generated files from v1.0, including on rebuild.
+    for old in ['textures/terrain_texture.json', 'textures/blocks/kitchen_xray_clear.png']:
+        (xray / old).unlink(missing_ok=True)
     write_json(fullbright / 'manifest.json', manifest('Kitchen Fullbright (Vibrant Visuals)',
         'Raised white ambient lighting. Requires Vibrant Visuals; inactive in Simple/Fancy graphics.',
         '41675e76-31de-4fd0-9bb0-570696d1db72', 'b0810756-e57d-40e3-bc5c-5b395a67d51f', pbr=True))

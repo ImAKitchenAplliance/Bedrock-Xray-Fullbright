@@ -1,112 +1,107 @@
 {
-  "format_version": [
-    1,
-    1,
-    0
-  ],
   "stone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "deepslate": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "granite": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "diorite": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "andesite": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "dirt": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "coarse_dirt": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "dirt_with_roots": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "grass": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "podzol": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "mycelium": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "gravel": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "sand": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "red_sand": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "sandstone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "red_sandstone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "clay": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "hardened_clay": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "stained_hardened_clay": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "mud": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "packed_mud": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "tuff": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "calcite": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "dripstone_block": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "netherrack": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "basalt": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "smooth_basalt": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "blackstone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "soul_sand": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "soul_soil": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "crimson_nylium": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "warped_nylium": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "end_stone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "infested_stone": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   },
   "infested_deepslate": {
-    "textures": "kitchen_xray_clear"
+    "blockshape": "invisible"
   }
 }
