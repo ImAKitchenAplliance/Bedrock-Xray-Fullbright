@@ -76,6 +76,10 @@ def main():
         'format_version': '1.21.80', 'minecraft:lighting_settings': {
             'description': {'identifier': 'minecraft:default_lighting'},
             'ambient': {'color': '#FFFFFF', 'illuminance': 1.0}}})
+    for extra in ['Kitchen-Brighter-Blocks', 'Kitchen-Solid-Ores']:
+        pack = ROOT / 'packs' / extra
+        if (pack / 'manifest.json').exists():
+            package(pack)
     nightvision = ROOT / 'packs' / 'Kitchen-Night-Vision'
     write_json(nightvision / 'manifest.json', {
         'format_version': 2,

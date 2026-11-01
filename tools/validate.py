@@ -56,10 +56,14 @@ for path in sorted((ROOT / 'dist').glob('*.mcpack')):
             pixels = zlib.decompress(compressed)
             assert len(pixels) == 16 * (1 + 16 * 4)
             assert not any(pixels), 'Terrain texture is not fully transparent'
+        elif 'lighting/global.json' not in names:
+            textures = [n for n in names if n.startswith('textures/blocks/') and n.endswith(('.png', '.tga'))]
+            assert len(textures) >= 20
+            assert 'capabilities' not in manifest and 'dependencies' not in manifest
         else:
             assert 'pbr' in manifest['capabilities']
             lighting = json.loads(archive.read('lighting/global.json'))['minecraft:lighting_settings']
             assert lighting['description']['identifier'] == 'minecraft:default_lighting'
             assert lighting['ambient']['illuminance'] > 0.02
         print(f'PASS {path.name}: archive, JSON, identities, and resources')
-assert len(identities) == 6, 'Expected two resource packs and one behavior pack'
+assert len(identities) == 10, 'Expected four resource packs and one behavior pack'

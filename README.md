@@ -1,12 +1,14 @@
 # Bedrock X-ray & Fullbright
 
-Two independent resource packs and an optional Night Vision behavior pack for
+Four independent resource packs and an optional Night Vision behavior pack for
 Minecraft Bedrock on Windows. These are initial, in-game **unverified** packs, not
 a client mod. The Night Vision option uses a world script; the other two are
 resource-only packs.
 
 ## Downloads
 
+- [Kitchen Brighter Blocks](dist/Kitchen-Brighter-Blocks.mcpack)
+- [Kitchen Solid Ores](dist/Kitchen-Solid-Ores.mcpack)
 - [Kitchen Night Vision — no Vibrant Visuals](dist/Kitchen-Night-Vision.mcpack)
 - [Kitchen X-ray](dist/Kitchen-Xray.mcpack)
 - [Kitchen Fullbright — Vibrant Visuals](dist/Kitchen-Fullbright-VV.mcpack)
@@ -107,5 +109,62 @@ require Bedrock 1.21.90 or newer; actual renderer compatibility requires game te
 
 Format references checked against Mojang's public
 [Bedrock samples](https://github.com/Mojang/bedrock-samples/tree/main/resource_pack):
-`blocks.json`, `manifest.json`, and `lighting/global.json`. The packs contain generated
-assets, not redistributed vanilla texture files.
+`blocks.json`, `manifest.json`, and `lighting/global.json`. The original packs contain generated assets. Brighter Blocks additionally includes
+modified vanilla sample textures, credited in its asset notice.
+
+## Brighter Blocks — standard graphics resource pack
+
+[Download Kitchen Brighter Blocks](dist/Kitchen-Brighter-Blocks.mcpack).
+Lifts each block texture's RGB channels 40% toward white, preserving original detail,
+alpha, dimensions and animation-strip layout. No behavior pack, cheats, scripts,
+Vibrant Visuals, or ray tracing required. Targets the vanilla `textures/blocks`
+color assets in the recorded Mojang sample snapshot, including animated textures.
+Blocks rendered from entity textures (for example chests), biome color tints,
+UI/items, and future textures outside that snapshot are not brightened by this pack.
+
+This changes texture colors, **not lighting**: even pale textures still become dark
+in unlit areas. It does not change mob spawning, collision, fog, or ore visibility
+behind solid blocks. The modified vanilla assets remain subject to the Minecraft
+EULA; attribution and the source snapshot are included in the pack.
+
+## Solid Ores — standard graphics resource pack
+
+[Download Kitchen Solid Ores](dist/Kitchen-Solid-Ores.mcpack).
+Replaces entire ore faces with flat, vivid colors, including normal and deepslate
+variants. Ancient debris is the naturally generated source of netherite, so both
+ancient debris and the netherite storage block are pink. Gilded blackstone is yellow.
+
+| Ore | Color |
+| --- | --- |
+| Diamond | Blue |
+| Ancient debris / netherite block | Pink |
+| Emerald | Green |
+| Gold / Nether gold | Yellow |
+| Iron | Orange |
+| Copper | Turquoise |
+| Coal | Pale gray |
+| Redstone | Red |
+| Lapis | Purple |
+| Nether quartz | White |
+
+Despite the requested glowing appearance, these are high-visibility colors,
+**not light-emitting or emissive textures** on standard graphics. Normal lighting
+and face shading still apply. No behavior changes or modified drops are included.
+
+Import either `.mcpack` by double-clicking, then activate under **Resource Packs**.
+When combining, order packs from highest to lowest: **Solid Ores → X-ray (optional)
+→ Brighter Blocks**. Other texture packs may conflict. Reload the world after
+changing the stack. Test the ore palette in a lit Creative world, then compare the
+brightness pack in daylight and an unlit room. Check plants/glass for preserved
+transparency and water/lava for animation. In-game validation remains outstanding.
+
+To regenerate these assets, install `Pillow==12.3.0` in a Python environment and run:
+
+```sh
+python3 tools/build-visibility.py /path/to/bedrock-samples
+python3 tools/test-visibility.py /path/to/bedrock-samples
+```
+
+Use Mojang sample commit `15701fa9c13923f12662984c32c124327e40e3d3` with all
+`resource_pack/textures/blocks` color assets available. Generated assets are checked
+in, so ordinary `python3 tools/build.py` packaging needs no download or Pillow.

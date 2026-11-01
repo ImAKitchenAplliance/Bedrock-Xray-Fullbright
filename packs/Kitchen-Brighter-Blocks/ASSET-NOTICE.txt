@@ -1,0 +1,4 @@
+Modified Minecraft sample textures. Original assets (c) Mojang AB. All rights reserved.
+Source: https://github.com/Mojang/bedrock-samples
+Snapshot: 15701fa9c13923f12662984c32c124327e40e3d3
+Use subject to Minecraft EULA: https://www.minecraft.net/en-us/eula

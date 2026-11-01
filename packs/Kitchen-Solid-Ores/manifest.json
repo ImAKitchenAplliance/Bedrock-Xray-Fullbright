@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Kitchen Solid Ores",
+    "description": "High-visibility solid-color ores. Blue diamond, pink ancient debris. Not emissive.",
+    "uuid": "6df9a33a-0ce7-4ee8-9faa-1561b105b9a1",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "3f390f9e-1631-4d0c-be13-b07d44df009b",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
