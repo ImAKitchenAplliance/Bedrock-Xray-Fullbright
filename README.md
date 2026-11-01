@@ -1,11 +1,13 @@
 # Bedrock X-ray & Fullbright
 
-Two independent resource packs for Minecraft Bedrock on Windows. These are initial,
-in-game **unverified** packs, not a client mod. No behavior packs, scripts, commands,
-external textures, or achievements-changing world settings are included.
+Two independent resource packs and an optional Night Vision behavior pack for
+Minecraft Bedrock on Windows. These are initial, in-game **unverified** packs, not
+a client mod. The Night Vision option uses a world script; the other two are
+resource-only packs.
 
 ## Downloads
 
+- [Kitchen Night Vision — no Vibrant Visuals](dist/Kitchen-Night-Vision.mcpack)
 - [Kitchen X-ray](dist/Kitchen-Xray.mcpack)
 - [Kitchen Fullbright — Vibrant Visuals](dist/Kitchen-Fullbright-VV.mcpack)
 
@@ -16,6 +18,33 @@ packs that change the same resources. Reload the world after changing packs.
 To uninstall, deactivate the packs; imported copies can be deleted in Minecraft's
 storage settings. Import a rebuilt pack again after incrementing its version if
 Minecraft keeps an older cached copy.
+
+## Night Vision — standard graphics, no Vibrant Visuals
+
+This is the practical alternative for Windows machines without Vibrant Visuals.
+It is a **behavior pack**, not a fullbright texture pack: every five seconds it
+applies 60 seconds of Night Vision I, without particles, to every player in the
+world. It uses stable `@minecraft/server` 2.0.0; no Beta APIs experiment is requested.
+Night Vision brightens dark areas but does not remove fog, darkness effects, or
+Bedrock's hidden-face culling, and does not change actual block light or mob spawning.
+
+Double-click `Kitchen-Night-Vision.mcpack` to import, then activate it under your
+world's **Behavior Packs → My Packs**. Test on a copy of your world first: behavior
+packs can affect achievement eligibility; check the game's warning before saving.
+You need control of the world/server. This cannot be installed as a global resource
+pack to gain Night Vision on arbitrary multiplayer servers.
+
+The effect is automatically reapplied after death, drinking milk, joining, or
+changing dimensions, within five seconds. Deactivate the pack and reload to stop;
+its last effect expires within 60 seconds of active game time. It refreshes any
+existing Night Vision effect, so do not use alongside another add-on that manages
+that effect unless you want this behavior.
+
+**In-game checks still required:** with Simple/Fancy graphics, enter a sealed dark
+room and wait five seconds. Confirm Night Vision is active and visibility improves.
+Drink milk and confirm the effect returns. Repeat after death/respawn and in the
+Nether/End. Disable the pack, reload, and wait 60 seconds to confirm it expires.
+If nothing happens, send the Minecraft version and content-log script errors.
 
 ## X-ray
 
@@ -66,9 +95,12 @@ Python 3.10+; no packages or network access required:
 ```sh
 python3 tools/build.py
 python3 tools/validate.py
+# Optional script logic tests (Node.js 18+; mock API, not Minecraft):
+node --experimental-vm-modules tools/test-night-vision.mjs
 ```
 
-Editable definitions live in `tools/build.py`. The build writes the unpacked packs
+Editable definitions live in `tools/build.py`; the Night Vision script is
+`src/night-vision/main.js`. The build writes the unpacked packs
 under `packs/` and reproducible import archives under `dist/`. Stable pack UUIDs
 allow updates. Raise `VERSION` before distributing an updated release. Pack manifests
 require Bedrock 1.21.90 or newer; actual renderer compatibility requires game testing.

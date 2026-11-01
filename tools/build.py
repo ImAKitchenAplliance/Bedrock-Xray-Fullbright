@@ -1,4 +1,4 @@
-"""Build two independent Bedrock packs with Python 3; no third-party dependencies."""
+"""Build independent Bedrock packs with Python 3; no third-party dependencies."""
 from pathlib import Path
 import json
 import struct
@@ -76,6 +76,24 @@ def main():
         'format_version': '1.21.80', 'minecraft:lighting_settings': {
             'description': {'identifier': 'minecraft:default_lighting'},
             'ambient': {'color': '#FFFFFF', 'illuminance': 1.0}}})
+    nightvision = ROOT / 'packs' / 'Kitchen-Night-Vision'
+    write_json(nightvision / 'manifest.json', {
+        'format_version': 2,
+        'header': {
+            'name': 'Kitchen Night Vision (No Vibrant Visuals)',
+            'description': 'Behavior pack: refreshes Night Vision for all players in this world.',
+            'uuid': '3b50601b-92e8-4ce7-9a16-8e495fb76a93',
+            'version': VERSION, 'min_engine_version': [1, 21, 90]},
+        'modules': [{'type': 'script', 'language': 'javascript',
+                     'uuid': 'ed74fe13-41b7-46c7-b284-c8b49991f38f',
+                     'version': VERSION, 'entry': 'scripts/main.js'}],
+        'dependencies': [{'module_name': '@minecraft/server', 'version': '2.0.0'}]})
+    script = nightvision / 'scripts' / 'main.js'
+    script.parent.mkdir(parents=True, exist_ok=True)
+    script.write_bytes((ROOT / 'src' / 'night-vision' / 'main.js').read_bytes())
+    png(nightvision / 'pack_icon.png', 64, 64,
+        lambda x, y: (140, 240, 90, 255) if 12 <= x < 52 and 12 <= y < 52 else (24, 28, 38, 255))
+    package(nightvision)
     for pack, color in [(xray, (40, 220, 230)), (fullbright, (255, 215, 70))]:
         png(pack / 'pack_icon.png', 64, 64,
             lambda x, y: (*color, 255) if 12 <= x < 52 and 12 <= y < 52 else (24, 28, 38, 255))

@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Kitchen Night Vision (No Vibrant Visuals)",
+    "description": "Behavior pack: refreshes Night Vision for all players in this world.",
+    "uuid": "3b50601b-92e8-4ce7-9a16-8e495fb76a93",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "ed74fe13-41b7-46c7-b284-c8b49991f38f",
+      "version": [
+        1,
+        0,
+        0
+      ],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    }
+  ]
+}

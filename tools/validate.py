@@ -22,7 +22,15 @@ for path in sorted((ROOT / 'dist').glob('*.mcpack')):
             identity = str(uuid.UUID(entry['uuid']))
             assert identity not in identities, 'Pack/module identity collision'
             identities.add(identity)
-        assert manifest['modules'][0]['type'] == 'resources'
+        module = manifest['modules'][0]
+        assert module['type'] in ('resources', 'script')
+        if module['type'] == 'script':
+            assert module['entry'] in names
+            assert archive.read(module['entry']) == (ROOT / 'src/night-vision/main.js').read_bytes()
+            assert manifest['dependencies'] == [{'module_name': '@minecraft/server', 'version': '2.0.0'}]
+            assert 'capabilities' not in manifest
+            print(f'PASS {path.name}: archive, JSON, identities, and script entry')
+            continue
         if 'blocks.json' in names:
             blocks = json.loads(archive.read('blocks.json'))
             assert len(blocks) > 30
@@ -54,4 +62,4 @@ for path in sorted((ROOT / 'dist').glob('*.mcpack')):
             assert lighting['description']['identifier'] == 'minecraft:default_lighting'
             assert lighting['ambient']['illuminance'] > 0.02
         print(f'PASS {path.name}: archive, JSON, identities, and resources')
-assert len(identities) == 4, 'Expected exactly two independent resource packs'
+assert len(identities) == 6, 'Expected two resource packs and one behavior pack'
