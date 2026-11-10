@@ -52,10 +52,10 @@ void paint(HWND window,HDC dc){
     text(dc,L"WINDOWS x64",{px(24),r.bottom-px(94),px(190),r.bottom-px(70)},small,RGB(153,148,145));
     text(dc,L"Local worlds + Realms",{px(24),r.bottom-px(64),px(190),r.bottom-px(30)},small,RGB(188,178,169));
     const int left=px(230),right=r.right-px(34),width=right-left;
-    text(dc,L"WINDOWS CLIENT / 0.2",{left,px(31),right,px(52)},small,RGB(255,157,92));
+    text(dc,L"WINDOWS CLIENT / 0.3",{left,px(31),right,px(52)},small,RGB(255,157,92));
     text(dc,L"Titanium Emporer",{left,px(65),right,px(116)},title,RGB(255,246,235));
     text(dc,L"Your world. Your edge.",{left,px(127),right,px(154)},body,RGB(205,184,168));
-    text(dc,L"DIAGNOSTIC PROTOTYPE  /  GAME FEATURES NOT IMPLEMENTED",{left,px(177),right,px(208)},small,RGB(255,170,104));
+    text(dc,L"INJECTED UI BUILD  /  GAME FEATURES NOT IMPLEMENTED",{left,px(177),right,px(208)},small,RGB(255,170,104));
     const wchar_t* names[]={L"X-RAY",L"NO FALL",L"FLY"};
     const wchar_t* descriptions[]={L"Terrain visibility",L"Fall-damage handling",L"Flight controls"};
     int gap=px(12),card=(width-gap*2)/3;
@@ -67,7 +67,7 @@ void paint(HWND window,HDC dc){
         text(dc,L"UNAVAILABLE",{x+px(16),px(308),x+card-px(12),px(330)},small,RGB(200,128,80));
     }
     text(dc,L"CONNECTION & DIAGNOSTICS",{left,px(356),right,px(380)},small,RGB(190,180,172));
-    text(dc,busy?L"Working...":L"Read build is read-only. Attach loads the diagnostic DLL only.",
+    text(dc,busy?L"Working...":L"Read build is read-only. Inject UI adds the Titanium branding layer.",
         {left,r.bottom-px(25),right,r.bottom-px(3)},small,RGB(150,142,135));
 }
 void fonts(){
@@ -88,7 +88,7 @@ void clipboard(HWND w){
 void work(HWND w,int id){
     if(busy)return;
     if(id==copy_id){clipboard(w);return;}
-    if(id==attach_id && MessageBoxW(w,L"This loads a diagnostic DLL into Minecraft. It does not enable X-ray, No Fall or Fly.\n\nWindows injection has not been runtime-tested. Stay at the title screen. Continue?",L"Titanium Emporer - diagnostic attachment",MB_OKCANCEL|MB_ICONINFORMATION)!=IDOK)return;
+    if(id==attach_id && MessageBoxW(w,L"This loads the Titanium UI DLL into Minecraft. It draws orange/black branding over the game window; native game buttons are unchanged.\n\nX-ray, No Fall and Fly are not implemented. Use windowed/borderless mode and stay at the title screen for this untested build. Continue?",L"Titanium Emporer - injected UI",MB_OKCANCEL|MB_ICONINFORMATION)!=IDOK)return;
     busy=true;for(auto b:buttons)EnableWindow(b,FALSE);InvalidateRect(w,nullptr,FALSE);
     try{
         std::thread([w,id]{
@@ -107,7 +107,7 @@ LRESULT CALLBACK window_proc(HWND w,UINT message,WPARAM wp,LPARAM lp){
         output=CreateWindowExW(WS_EX_CLIENTEDGE,L"EDIT",L"Titanium Emporer is ready.\r\n\r\nOpen Windows Bedrock, then select Read build.\r\nNo game adapter is verified. Gameplay features remain unavailable.",
             WS_CHILD|WS_VISIBLE|WS_TABSTOP|ES_MULTILINE|ES_READONLY|ES_AUTOVSCROLL|WS_VSCROLL,0,0,0,0,w,nullptr,nullptr,nullptr);
         SendMessageW(output,WM_SETFONT,reinterpret_cast<WPARAM>(mono),TRUE);
-        const wchar_t* captions[]={L"Read build",L"Attach diagnostic",L"Detach",L"Copy report"};
+        const wchar_t* captions[]={L"Read build",L"Inject UI",L"Detach",L"Copy report"};
         for(int i=0;i<4;++i){buttons[i]=CreateWindowExW(0,L"BUTTON",captions[i],WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_OWNERDRAW,
             0,0,0,0,w,reinterpret_cast<HMENU>(static_cast<INT_PTR>(inspect_id+i)),nullptr,nullptr);}
         layout(w);return 0;}

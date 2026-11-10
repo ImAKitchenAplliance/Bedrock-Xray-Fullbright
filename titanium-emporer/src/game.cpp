@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #include <cstdint>
+#include <cstring>
 #include <cwchar>
 #include <stdexcept>
 #include <vector>
@@ -62,14 +63,14 @@ std::wstring version(const std::wstring& p){
     return std::to_wstring(HIWORD(v->dwFileVersionMS))+L"."+std::to_wstring(LOWORD(v->dwFileVersionMS))+L"."+
         std::to_wstring(HIWORD(v->dwFileVersionLS))+L"."+std::to_wstring(LOWORD(v->dwFileVersionLS));
 }
-struct Module{std::uintptr_t address{};std::wstring path;};
+struct Module{std::uintptr_t address{};std::wstring path;DWORD size{};};
 Module module(DWORD pid,const std::wstring& name){
     HANDLE raw=INVALID_HANDLE_VALUE;
     for(int i=0;i<4;++i){raw=CreateToolhelp32Snapshot(TH32CS_SNAPMODULE,pid);if(raw!=INVALID_HANDLE_VALUE || GetLastError()!=ERROR_BAD_LENGTH)break;}
     Handle s(raw);if(raw==INVALID_HANDLE_VALUE)fail("Module list unavailable");
     MODULEENTRY32W e{};e.dwSize=sizeof(e);
     if(!Module32FirstW(s.get(),&e))fail("Module enumeration failed");
-    do{if(!_wcsicmp(e.szModule,name.c_str()))return {reinterpret_cast<std::uintptr_t>(e.modBaseAddr),e.szExePath};}
+    do{if(!_wcsicmp(e.szModule,name.c_str()))return {reinterpret_cast<std::uintptr_t>(e.modBaseAddr),e.szExePath,e.modBaseSize};}
     while(Module32NextW(s.get(),&e));
     if(GetLastError()!=ERROR_NO_MORE_FILES)fail("Module enumeration failed");
     return {};
@@ -90,6 +91,42 @@ DWORD call(HANDLE process,std::uintptr_t function,void* argument,bool& done){
         throw std::runtime_error("Remote operation incomplete. Restart Minecraft before retrying; the thread may still finish.");
     done=true;DWORD code{};if(!GetExitCodeThread(t.get(),&code))fail("Thread status unavailable");return code;
 }
+// Resolve from the loaded image so old DLLs cannot receive newer entry-point RVAs.
+std::uintptr_t client_export(HANDLE process,const Module& image,const char* wanted){
+    auto read=[&](DWORD rva,void* buffer,SIZE_T size){
+        if(rva>image.size || size>image.size-rva)throw std::runtime_error("Invalid client export range.");
+        SIZE_T received{};
+        if(!ReadProcessMemory(process,reinterpret_cast<void*>(image.address+rva),buffer,size,&received)||received!=size)fail("Cannot read loaded client exports");
+    };
+    IMAGE_DOS_HEADER dos{};read(0,&dos,sizeof(dos));
+    if(dos.e_magic!=IMAGE_DOS_SIGNATURE || dos.e_lfanew<0)throw std::runtime_error("Invalid client DLL header.");
+    IMAGE_NT_HEADERS64 nt{};read(static_cast<DWORD>(dos.e_lfanew),&nt,sizeof(nt));
+    if(nt.Signature!=IMAGE_NT_SIGNATURE || nt.OptionalHeader.Magic!=IMAGE_NT_OPTIONAL_HDR64_MAGIC ||
+       nt.OptionalHeader.NumberOfRvaAndSizes<=IMAGE_DIRECTORY_ENTRY_EXPORT)throw std::runtime_error("Invalid client DLL image.");
+    auto directory=nt.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+    if(!directory.VirtualAddress || directory.Size<sizeof(IMAGE_EXPORT_DIRECTORY))throw std::runtime_error("Client export directory missing.");
+    IMAGE_EXPORT_DIRECTORY exports{};read(directory.VirtualAddress,&exports,sizeof(exports));
+    if(exports.NumberOfNames>4096 || exports.NumberOfFunctions>4096)throw std::runtime_error("Unexpected client export table size.");
+    std::vector<DWORD> names(exports.NumberOfNames),functions(exports.NumberOfFunctions);
+    std::vector<WORD> ordinals(exports.NumberOfNames);
+    read(exports.AddressOfNames,names.data(),names.size()*sizeof(DWORD));
+    read(exports.AddressOfNameOrdinals,ordinals.data(),ordinals.size()*sizeof(WORD));
+    read(exports.AddressOfFunctions,functions.data(),functions.size()*sizeof(DWORD));
+    for(std::size_t i=0;i<names.size();++i){
+        char name[64]{};
+        for(DWORD j=0;j<sizeof(name)-1;++j){
+            if(names[i]>image.size || j>=image.size-names[i])throw std::runtime_error("Invalid export name range.");
+            read(names[i]+j,name+j,1);if(!name[j])break;
+        }
+        if(std::strcmp(name,wanted))continue;
+        if(ordinals[i]>=functions.size())throw std::runtime_error("Invalid client export ordinal.");
+        auto rva=functions[ordinals[i]];
+        if(!rva || rva>=image.size || (rva>=directory.VirtualAddress && rva-directory.VirtualAddress<directory.Size))
+            throw std::runtime_error("Invalid or forwarded client entry point.");
+        return image.address+rva;
+    }
+    throw std::runtime_error("Loaded DLL is an older/incompatible build. Restart Minecraft, extract the entire new ZIP, then attach again.");
+}
 std::wstring diagnostic(bool detach){
     DWORD pid=game_pid();
     Handle h(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION|SYNCHRONIZE|PROCESS_CREATE_THREAD|PROCESS_VM_OPERATION|PROCESS_VM_WRITE|PROCESS_VM_READ,FALSE,pid));
@@ -99,15 +136,14 @@ std::wstring diagnostic(bool detach){
     auto remote=module(pid,L"titanium-client.dll");bool done=true;
     if(remote.address && _wcsicmp(remote.path.c_str(),dll.c_str()))throw std::runtime_error("Loaded Titanium DLL is from another location.");
     if(detach){
-        if(!remote.address)return L"No diagnostic DLL is attached.";
+        if(!remote.address)return L"No Titanium DLL is attached.";
+        if(call(h.get(),client_export(h.get(),remote,"TitaniumStop"),nullptr,done)!=0)
+            throw std::runtime_error("Injected UI did not stop. DLL was left loaded; restart Minecraft before retrying.");
         if(!call(h.get(),system_export(pid,"FreeLibrary"),reinterpret_cast<void*>(remote.address),done))throw std::runtime_error("Windows refused to unload the DLL.");
-        return L"Diagnostic DLL detached. No game hooks were installed.";
+        return L"Injected UI stopped and Titanium DLL detached. No game hooks were installed.";
     }
     if(remote.address)throw std::runtime_error("Already attached. Detach before attaching again.");
-    HMODULE local=LoadLibraryW(dll.c_str());if(!local)fail("Place titanium-client.dll beside Titanium-Emporer.exe");
-    auto probe=GetProcAddress(local,"TitaniumProbe");
-    const auto offset=reinterpret_cast<std::uintptr_t>(probe)-reinterpret_cast<std::uintptr_t>(local);FreeLibrary(local);
-    if(!probe)throw std::runtime_error("Diagnostic export missing from DLL.");
+    if(GetFileAttributesW(dll.c_str())==INVALID_FILE_ATTRIBUTES)throw std::runtime_error("Place the new titanium-client.dll beside Titanium-Emporer.exe.");
     SIZE_T size=(dll.size()+1)*sizeof(wchar_t);
     void* arg=VirtualAllocEx(h.get(),nullptr,size,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);if(!arg)fail("Cannot allocate DLL path");
     try{
@@ -118,15 +154,17 @@ std::wstring diagnostic(bool detach){
     VirtualFreeEx(h.get(),arg,0,MEM_RELEASE);
     remote=module(pid,L"titanium-client.dll");
     if(!remote.address || _wcsicmp(remote.path.c_str(),dll.c_str()))throw std::runtime_error("Minecraft did not load the DLL. Loader policy/access may have rejected it; no bypass attempted.");
-    if(call(h.get(),remote.address+offset,nullptr,done)!=2)throw std::runtime_error("Unexpected diagnostic response. No gameplay feature is enabled.");
-    return L"Titanium Emporer DLL answered.\r\nDiagnostic attachment only. X-ray, No Fall and Fly have no game hooks yet.";
+    const auto code=call(h.get(),client_export(h.get(),remote,"TitaniumStart"),nullptr,done);
+    if(code!=3)throw std::runtime_error("DLL loaded, but injected UI startup returned code "+std::to_string(code)+
+        ". 40=no game window; 41=window setup failed; 42=worker failed; 43=timeout; 44=already running. Detach or restart Minecraft before retrying.");
+    return L"Injected UI started. Return to Minecraft in windowed/borderless mode.\r\nMINECRAFT / TITANIUM EDITION branding is visible when the game has focus.\r\nInsert hides/shows the UI. X-ray, No Fall and Fly remain unavailable.";
 }
 }
 std::wstring inspect_game(){
     auto pid=game_pid();Handle h(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION|SYNCHRONIZE,FALSE,pid));
     if(!h.get())fail("Cannot inspect Minecraft");auto p=target_path(h.get());
     return L"Minecraft detected  |  PID "+std::to_wstring(pid)+L"\r\nFile version: "+version(p)+
-        L"\r\nSession: not classified. No build adapter is verified.\r\nX-ray / No Fall / Fly: unavailable.";
+        L"\r\nSession: not classified. No gameplay adapter is verified. UI attachment is available separately.\r\nX-ray / No Fall / Fly: unavailable.";
 }
 std::wstring attach_diagnostic(){return diagnostic(false);}
 std::wstring detach_diagnostic(){return diagnostic(true);}

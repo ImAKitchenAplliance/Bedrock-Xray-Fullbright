@@ -10,4 +10,4 @@ mkdir -p out
   -I include src/launcher.cpp src/game.cpp -lversion -lgdi32 -luser32 -ldwmapi \
   -o out/Titanium-Emporer.exe
 "$zig_binary" c++ -target x86_64-windows-gnu -std=c++17 -O2 -Wall -Wextra -Werror \
-  -shared src/client.cpp -o out/titanium-client.dll
+  -shared -I include src/client.cpp -luser32 -lgdi32 -o out/titanium-client.dll

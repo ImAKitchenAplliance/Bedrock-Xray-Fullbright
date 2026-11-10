@@ -8,7 +8,7 @@ import zipfile
 
 root = Path(__file__).resolve().parents[1]
 binaries = Path(sys.argv[1]).resolve()
-output = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else root.parent / 'dist/Titanium-Emporer-0.2-Windows.zip'
+output = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else root.parent / 'dist/Titanium-Emporer-0.3-Windows.zip'
 files = {name: (binaries / name).read_bytes() for name in ('Titanium-Emporer.exe', 'titanium-client.dll')}
 for name, data in files.items():
     assert data[:2] == b'MZ', name
@@ -18,11 +18,11 @@ for name, data in files.items():
     if name.endswith('.exe'):
         assert struct.unpack_from('<H', data, pe+24+68)[0] == 2, 'Expected Windows GUI subsystem'
 info = {
-    'name': 'Titanium Emporer', 'version': '0.2.0', 'platform': 'Windows x64',
-    'status': 'Diagnostic prototype; gameplay features not implemented',
+    'name': 'Titanium Emporer', 'version': '0.3.0', 'platform': 'Windows x64',
+    'status': 'Injected UI preview; gameplay features not implemented',
     'compiler': 'Zig 0.15.2, C++17, x86_64-windows-gnu',
     'verified': ['Runtime activation contract tests', 'Windows x64 cross-compilation', 'PE GUI subsystem and DLL export/import inspection'],
-    'not_verified': ['Windows GUI execution', 'Minecraft injection', 'Realm/local/server classification', 'Xray, NoFall, Fly (not implemented)', 'MSVC/CMake build'],
+    'not_verified': ['Windows GUI execution', 'Minecraft injection and UI overlay', 'Realm/local/server classification', 'Xray, NoFall, Fly (not implemented)', 'MSVC/CMake build'],
     'sha256': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()},
 }
 output.parent.mkdir(parents=True, exist_ok=True)
