@@ -1,15 +1,17 @@
 # Bedrock X-ray & Fullbright
 
-## Titanium Emporer — injected UI preview
+## Titanium Emporer — client downloads withdrawn
 
-[Download the orange-and-black Windows launcher](dist/Titanium-Emporer-0.3-Windows.zip)
-· [Source and build notes](titanium-emporer/README.md)
+Windows Security reported **Trojan:Script/Sabsik.FL.A!ml** in the 0.3 client ZIP.
+Client binary downloads (0.2 and 0.3) have been withdrawn from the current tree.
+Do not restore blocked files, disable protection, or add antivirus exclusions.
+This has not been confirmed as a false positive.
 
-Formerly Project Middle. Windows x64 only, with an orange-to-black launcher and an injected branding
-overlay displaying MINECRAFT / TITANIUM EDITION. Native Minecraft buttons remain
-unchanged. X-ray, No Fall and Fly are not implemented. Windows execution and
-Minecraft injection remain untested. Application code is original to this project.
-Extract the ZIP and keep its EXE and DLL together.
+[Security notice and bounded audit](titanium-emporer/SECURITY-NOTICE.md)
+· [Source and implementation status](titanium-emporer/README.md)
+
+Source remains available for review. No replacement binary is supplied. Historical
+Git commits can still contain old artifacts; do not use those as a workaround.
 
 Four independent resource packs and an optional Night Vision behavior pack for
 Minecraft Bedrock on Windows. These are experimental packs, not a client mod.

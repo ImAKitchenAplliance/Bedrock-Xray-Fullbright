@@ -1,4 +1,13 @@
-# Titanium Emporer 0.3 — injected UI preview
+# Titanium Emporer — client binaries withdrawn
+
+**Windows Defender blocked the 0.3 ZIP as Trojan:Script/Sabsik.FL.A!ml.**
+Current binary downloads are withdrawn, including 0.2 as a precaution. Do not
+restore blocked files or disable/exclude protection to run this project.
+See [SECURITY-NOTICE.md](SECURITY-NOTICE.md) for evidence and limitations.
+The implementation/build notes below are retained for source review, not as a
+recommendation to run or rebuild the flagged client. No replacement is supplied.
+
+## Withdrawn 0.3 implementation
 
 Windows x64 client, formerly Project Middle. The injector now loads a DLL that
 creates an in-process Win32 overlay over the Minecraft window. No resource pack or
